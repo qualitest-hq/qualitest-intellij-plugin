@@ -2,6 +2,13 @@
 
 面向 Java / Spring 项目的 **QualiTest 平台** 配套插件：在 IDE 内扫描 Controller 接口元数据，并上传到 QualiTest 服务端。
 
+## 相关仓库
+
+| 仓库 | 说明 |
+|------|------|
+| [qualitest](https://github.com/qualitest-hq/qualitest) | 质衡主平台（服务端；含前端） |
+| [qualitest-demo](https://github.com/qualitest-hq/qualitest-demo) | 推荐联调靶场 / 示例工程 |
+
 | 项目事实 | 说明 |
 |---------|------|
 | **插件 ID** | `com.qualitest.qualitest-intellij-plugin` |

@@ -35,9 +35,19 @@ Thumbs.db
 *.log
 logs/
 
-# Local configuration (contains user-specific settings)
+# Local configuration / secrets（勿提交）
 *.local
 *.local.properties
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.jks
+*.keystore
+id_rsa
+id_rsa.*
+*.key
 
 # Test outputs
 test-results/
