@@ -1,0 +1,85 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+    <id>com.qualitest.qualitest-intellij-plugin</id>
+
+    <!-- Public plugin name should be written in Title Case. -->
+    <name>Qualitest Helper</name>
+
+    <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+    <vendor>QualiTest</vendor>
+
+    <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager. -->
+    <description><![CDATA[
+        <b>English</b><br>
+        Qualitest Helper scans Java Controller APIs and uploads them to the QualiTest platform.<br>
+        <br>
+        <b>Features</b><br>
+        - Automatically scans Controller endpoints in the project<br>
+        - Extracts API metadata (path, params, request/response schema)<br>
+        - Uploads APIs to the QualiTest platform<br>
+        - Upload from Controller context menu<br>
+        <em>Supports Spring MVC, Swagger, and Validation annotations</em><br>
+        <br>
+        <b>中文</b><br>
+        Qualitest Helper 是一款 Java API 扫描与上传插件，用于对接质衡（QualiTest）平台。<br>
+        <br>
+        <b>功能</b><br>
+        - 自动扫描项目中 Controller 接口<br>
+        - 提取路径、参数、请求与响应结构<br>
+        - 上传到质衡（QualiTest）平台<br>
+        - 支持 Controller 右键菜单上传<br>
+        <em>支持 Spring MVC、Swagger、Validation 注解</em>
+        ]]></description>
+
+    <!-- Product and plugin compatibility requirements. -->
+    <depends>com.intellij.java</depends>
+    <depends>com.intellij.modules.json</depends>
+    <depends>org.intellij.plugins.markdown</depends>
+    <depends>com.intellij.modules.platform</depends>
+
+    <resource-bundle>messages.QualiTestBundle</resource-bundle>
+
+    <!-- Extensions defined by the plugin. -->
+    <extensions defaultExtensionNs="com.intellij">
+
+        <!-- Settings page -->
+        <applicationConfigurable instance="com.qualitest.config.QualiTestConfigurable"
+                                 id="QualiTestSettings"
+                                 groupId="tools"
+                                 displayName="Qualitest Helper"/>
+
+        <!-- QualiTestSettings：applicationService 注册 -->
+        <applicationService serviceImplementation="com.qualitest.config.QualiTestSettings"/>
+
+        <!-- 将设置中的分组 JavaDoc 标签（如 @eo.groupName）登记为合法标签，消除「未知标签」检查 -->
+        <customJavadocTagProvider implementation="com.qualitest.javadoc.QualiTestCustomJavadocTagProvider"/>
+
+        <notificationGroup id="QualiTest API Scanner" displayType="BALLOON"/>
+    </extensions>
+
+    <!-- Actions defined by the plugin. -->
+    <actions>
+        <group id="QualiTest.Actions" text="Qualitest Helper" description="Qualitest Helper tools" icon="/icons/qualitestAction.png">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <action id="QualiTest.ScanApiAction"
+                    class="com.qualitest.action.ScanApiAction"
+                    icon="/icons/qualitestAction.png">
+                <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift Q"/>
+            </action>
+        </group>
+
+        <!-- Controller context menu -->
+        <group id="QualiTest.Separator" text="Qualitest Helper" icon="/icons/qualitestAction.png">
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+            <action id="QualiTest.ControllerUploadAllAction"
+                    class="com.qualitest.action.ControllerUploadAllAction"
+                    icon="/icons/qualitestAction.png"/>
+            <action id="QualiTest.ControllerSelectUploadAction"
+                    class="com.qualitest.action.ControllerSelectUploadAction"
+                    icon="/icons/qualitestAction.png"/>
+            <separator/>
+        </group>
+    </actions>
+
+</idea-plugin>

@@ -1,0 +1,52 @@
+package com.qualitest.scan.model;
+
+import com.google.gson.annotations.SerializedName;
+import lombok.*;
+
+import java.util.Date;
+
+/**
+ * 单个 API 导入项。
+ * 对应后端 ApiImportParams.ApiImportItem。
+ *
+ * @author qualitest
+ */
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ApiImportItem {
+
+    @SerializedName("apiStatus")
+    private String apiStatus;
+
+    @SerializedName("apiGroup")
+    private String apiGroup;
+
+    @SerializedName("apiName")
+    private String apiName;
+
+    @SerializedName("apiDescription")
+    private String apiDescription;
+
+    @SerializedName("apiPath")
+    private String apiPath;
+
+    @SerializedName("protocolType")
+    private String protocolType;
+
+    @SerializedName("requestConfig")
+    private String requestConfig;
+
+    @SerializedName("responseConfig")
+    private String responseConfig;
+
+    @SerializedName("sourceSystem")
+    private String sourceSystem;
+
+    @SerializedName("externalId")
+    private String externalId;
+
+    @SerializedName("lastSyncTime")
+    private Date lastSyncTime;
+}

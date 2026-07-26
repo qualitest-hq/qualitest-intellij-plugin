@@ -1,0 +1,58 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IntelliJ Platform
+.intellijPlatform/
+
+# IDE - IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# IDE - JetBrains
+.idea/
+*.sln.iml
+
+# Kotlin
+*.class
+*.jar
+*.war
+*.ear
+*.log
+
+# Maven
+target/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Local configuration (contains user-specific settings)
+*.local
+*.local.properties
+
+# Test outputs
+test-results/
+test-report/
+*.test.out
+
+# Gradle plugin specific
+gradle-app.properties
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+
+# Coverage reports
+jacoco/
+*.exec

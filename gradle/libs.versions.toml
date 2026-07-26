@@ -1,0 +1,6 @@
+[versions]
+intellijPlatform = "2.10.5"
+
+[libraries]
+[plugins]
+intellijPlatform = { id = "org.jetbrains.intellij.platform", version.ref = "intellijPlatform" }
