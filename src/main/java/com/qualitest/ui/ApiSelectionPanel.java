@@ -6,6 +6,7 @@ import com.qualitest.QualiTestBundle;
 import com.qualitest.QualiTestNotifications;
 import com.qualitest.config.QualiTestSettings;
 import com.qualitest.config.UploadConfigSupport;
+import com.qualitest.scan.model.ApiImportUploadType;
 import com.qualitest.scan.model.ScannedApi;
 import com.qualitest.ui.render.UiStyles;
 import com.qualitest.ui.render.ApiListCellRenderer;
@@ -430,7 +431,8 @@ public class ApiSelectionPanel extends JPanel {
                 project,
                 settings.getServerUrl().trim(),
                 settings.getProjectToken().trim(),
-                toUpload
+                toUpload,
+                ApiImportUploadType.CONTROLLER_SELECT
         );
     }
 }

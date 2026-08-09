@@ -9,6 +9,7 @@ import com.qualitest.QualiTestIcons;
 import com.qualitest.QualiTestNotifications;
 import com.qualitest.config.QualiTestSettings;
 import com.qualitest.config.UploadConfigSupport;
+import com.qualitest.scan.model.ApiImportUploadType;
 import com.qualitest.scan.model.ScannedApi;
 import com.qualitest.ui.UploadTaskSupport;
 import org.jetbrains.annotations.NotNull;
@@ -71,7 +72,7 @@ public class ControllerUploadAllAction extends AnAction {
                 settings.getServerUrl().trim(),
                 settings.getProjectToken().trim(),
                 apis,
-                false
+                ApiImportUploadType.CONTROLLER_ALL
         );
     }
 

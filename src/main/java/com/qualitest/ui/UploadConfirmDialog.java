@@ -8,6 +8,7 @@ import com.qualitest.config.QualiTestSettings;
 import com.qualitest.config.UploadConfigSupport;
 import com.qualitest.scan.ApiUploadFilters;
 import com.qualitest.scan.UploadScanStats;
+import com.qualitest.scan.model.ApiImportUploadType;
 import com.qualitest.scan.model.ScannedApi;
 import com.qualitest.ui.render.UiStyles;
 import org.jetbrains.annotations.NotNull;
@@ -171,13 +172,13 @@ public class UploadConfirmDialog extends QualiTestUploadDialog {
         }
 
         close(OK_EXIT_CODE);
-        // 项目级全量上传：鉴权配置为空时由服务端写入双端 Bearer 默认模板
+        // 项目级全量上传：uploadType=project，鉴权配置为空时由服务端写入双端 Bearer 默认模板
         UploadTaskSupport.runUploadTask(
                 project,
                 settings.getServerUrl().trim(),
                 settings.getProjectToken().trim(),
                 toUpload,
-                true
+                ApiImportUploadType.PROJECT
         );
     }
 }

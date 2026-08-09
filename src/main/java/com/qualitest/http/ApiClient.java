@@ -14,6 +14,7 @@ import com.qualitest.QualiTestStrings;
 import com.qualitest.scan.model.ApiConfigV2Defaults;
 import com.qualitest.scan.model.ApiImportItem;
 import com.qualitest.scan.model.ApiImportParams;
+import com.qualitest.scan.model.ApiImportUploadType;
 import com.qualitest.scan.model.ScannedApi;
 import com.qualitest.scan.ImportResult;
 
@@ -63,12 +64,14 @@ public class ApiClient {
     /**
      * 上传扫描到的 API 列表。项目 ID 由请求头 X-Project-Token 在服务端解析。
      *
-     * @param seedProjectAuthIfEmpty 项目级上传传 true：项目鉴权配置为空时由服务端写入默认模板；
-     *                               单 Controller 上传传 false
+     * @param uploadType 上传入口类型（项目级 / Controller 全部 / 选择上传）
      */
-    public ImportResult uploadApis(List<ScannedApi> apis, boolean seedProjectAuthIfEmpty) throws ApiClientException {
+    public ImportResult uploadApis(List<ScannedApi> apis, ApiImportUploadType uploadType) throws ApiClientException {
         if (apis == null || apis.isEmpty()) {
             throw new ApiClientException(QualiTestBundle.message("scan.done.no.apis"));
+        }
+        if (uploadType == null) {
+            throw new ApiClientException("uploadType 不能为空");
         }
 
         validateUploadConfiguration();
@@ -79,7 +82,7 @@ public class ApiClient {
 
         ApiImportParams params = ApiImportParams.builder()
                 .configVersion(ApiImportParams.CONFIG_VERSION)
-                .seedProjectAuthIfEmpty(seedProjectAuthIfEmpty ? Boolean.TRUE : null)
+                .uploadType(uploadType)
                 .apiList(items)
                 .build();
 
@@ -91,11 +94,11 @@ public class ApiClient {
             // 记录插件发送条数，便于与服务端处理/新增/更新数对比
             result.setSentCount(apis.size());
             LOG.info(String.format(
-                    "QualiTest API 上传: 发送=%d, 处理=%d, 新增=%d, 更新=%d, 成功=%d, 失败=%d, seedAuth=%s",
+                    "QualiTest API 上传: 发送=%d, 处理=%d, 新增=%d, 更新=%d, 成功=%d, 失败=%d, uploadType=%s",
                     result.getSentCount(), result.getTotalCount(),
                     result.getInsertCount(), result.getUpdateCount(),
                     result.getSuccessCount(), result.getFailCount(),
-                    seedProjectAuthIfEmpty));
+                    uploadType.code()));
             return result;
         } catch (ApiClientException e) {
             throw e;
@@ -107,13 +110,6 @@ public class ApiClient {
         } catch (Exception e) {
             throw new ApiClientException(QualiTestBundle.message("error.upload.unknown"), e);
         }
-    }
-
-    /**
-     * 上传 API（不触发项目鉴权种子），等价于 {@code uploadApis(apis, false)}。
-     */
-    public ImportResult uploadApis(List<ScannedApi> apis) throws ApiClientException {
-        return uploadApis(apis, false);
     }
 
     private void validateUploadConfiguration() throws ApiClientException {

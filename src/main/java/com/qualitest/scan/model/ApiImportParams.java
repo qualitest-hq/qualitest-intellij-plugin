@@ -27,11 +27,11 @@ public class ApiImportParams {
     private Long testProjectId;
 
     /**
-     * 为 true 时：若服务端项目鉴权配置为空，则写入双端 Bearer 默认模板。
-     * 仅项目级全量上传应开启。
+     * 上传类型：project / controllerAll / controllerSelect。
+     * 服务端据此区分是否种子项目鉴权等策略。
      */
-    @SerializedName("seedProjectAuthIfEmpty")
-    private Boolean seedProjectAuthIfEmpty;
+    @SerializedName("uploadType")
+    private ApiImportUploadType uploadType;
 
     @SerializedName("apiList")
     private List<ApiImportItem> apiList;
