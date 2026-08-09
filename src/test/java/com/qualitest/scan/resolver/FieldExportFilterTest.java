@@ -46,4 +46,28 @@ public class FieldExportFilterTest {
         settings.setExcludeJsonIgnoreFields(false);
         assertFalse(settings.isExcludeJsonIgnoreFields());
     }
+
+    /**
+     * 前提：全新设置状态。
+     * 期望：免登录注解名单默认包含 Anonymous。
+     */
+    @Test
+    public void settingsDefaultAnonymousAnnotations() {
+        QualiTestSettings settings = new QualiTestSettings();
+        settings.loadState(new QualiTestSettings.State());
+        assertTrue(settings.getAnonymousAnnotations().contains("Anonymous"));
+    }
+
+    /**
+     * 前提：持久化里 anonymousAnnotations 为 null（旧配置升级）。
+     * 期望：读取时仍有默认免登录注解，避免名单空掉。
+     */
+    @Test
+    public void settingsNullAnonymousAnnotationsMeansDefault() {
+        QualiTestSettings.State state = new QualiTestSettings.State();
+        state.anonymousAnnotations = null;
+        QualiTestSettings settings = new QualiTestSettings();
+        settings.loadState(state);
+        assertTrue(settings.getAnonymousAnnotations().contains("Anonymous"));
+    }
 }

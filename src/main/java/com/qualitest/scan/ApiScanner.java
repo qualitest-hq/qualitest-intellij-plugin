@@ -12,6 +12,7 @@ import com.intellij.psi.search.FileTypeIndex;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.ProjectScope;
 import com.qualitest.QualiTestBundle;
+import com.qualitest.QualiTestConstants;
 import com.qualitest.scan.extractor.ApiInfoExtractor;
 import com.qualitest.scan.model.ScannedApi;
 import com.qualitest.scan.visitor.ControllerVisitor;
@@ -46,16 +47,28 @@ public class ApiScanner {
     private final ExplicitGroupChecker explicitGroupChecker;
 
     public ApiScanner(Project project, String groupTag, boolean ignoreFirstGroupLevel) {
-        this(project, groupTag, ignoreFirstGroupLevel, true);
+        this(project, groupTag, ignoreFirstGroupLevel, true, QualiTestConstants.DEFAULT_ANONYMOUS_ANNOTATIONS);
     }
 
     /**
-     * @param excludeJsonIgnoreFields 为 true 时，上传文档不包含带 {@code @JsonIgnore} 的模型字段
+     * @param excludeJsonIgnoreFields 为 true 时，上传文档不包含带 JsonIgnore 的模型字段
      */
     public ApiScanner(Project project, String groupTag, boolean ignoreFirstGroupLevel, boolean excludeJsonIgnoreFields) {
+        this(project, groupTag, ignoreFirstGroupLevel, excludeJsonIgnoreFields, QualiTestConstants.DEFAULT_ANONYMOUS_ANNOTATIONS);
+    }
+
+    /**
+     * @param excludeJsonIgnoreFields 为 true 时，上传文档不包含带 JsonIgnore 的模型字段
+     * @param anonymousAnnotations    免登录注解名单，用于给扫描结果打鉴权标签
+     */
+    public ApiScanner(
+            Project project,
+            String groupTag,
+            boolean ignoreFirstGroupLevel,
+            boolean excludeJsonIgnoreFields,
+            java.util.Collection<String> anonymousAnnotations) {
         this.project = project;
-        // excludeJsonIgnoreFields 贯穿 ApiInfoExtractor → 请求/响应字段过滤
-        this.extractor = new ApiInfoExtractor(groupTag, ignoreFirstGroupLevel, excludeJsonIgnoreFields);
+        this.extractor = new ApiInfoExtractor(groupTag, ignoreFirstGroupLevel, excludeJsonIgnoreFields, anonymousAnnotations);
         this.visitor = new ControllerVisitor();
         this.explicitGroupChecker = new ExplicitGroupChecker(groupTag);
     }

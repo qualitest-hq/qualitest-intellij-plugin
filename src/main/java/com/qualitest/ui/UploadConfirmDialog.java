@@ -171,11 +171,13 @@ public class UploadConfirmDialog extends QualiTestUploadDialog {
         }
 
         close(OK_EXIT_CODE);
+        // 项目级全量上传：鉴权配置为空时由服务端写入双端 Bearer 默认模板
         UploadTaskSupport.runUploadTask(
                 project,
                 settings.getServerUrl().trim(),
                 settings.getProjectToken().trim(),
-                toUpload
+                toUpload,
+                true
         );
     }
 }

@@ -4,13 +4,17 @@ import com.qualitest.QualiTestBundle;
 import com.qualitest.QualiTestConstants;
 import com.intellij.ui.TitledSeparator;
 import com.intellij.ui.components.JBPasswordField;
+import com.intellij.ui.components.JBScrollPane;
+import com.intellij.ui.components.JBTextArea;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
+import com.qualitest.scan.resolver.AuthAnnotationMatcher;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.util.List;
 
 /**
  * QualiTest设置面板
@@ -30,6 +34,8 @@ public class QualiTestSettingsPanel {
     private JCheckBox excludeJsonIgnoreFieldsCheckBox;
     private JCheckBox ignoreFirstGroupLevelCheckBox;
     private JBTextField groupTagField;
+    /** 免登录注解输入框：每行一个短名或全限定名 */
+    private JBTextArea anonymousAnnotationsArea;
 
     public QualiTestSettingsPanel(QualiTestSettings settings) {
         initComponents();
@@ -46,6 +52,11 @@ public class QualiTestSettingsPanel {
         ignoreFirstGroupLevelCheckBox = new JCheckBox();
         ignoreFirstGroupLevelCheckBox.setToolTipText(QualiTestBundle.message("settings.ignore.first.group.level.hint"));
         groupTagField = new JBTextField();
+        // 免登录注解名单：扫描时据此判断接口是否免登录
+        anonymousAnnotationsArea = new JBTextArea(4, FIELD_COLUMNS);
+        anonymousAnnotationsArea.setLineWrap(true);
+        anonymousAnnotationsArea.setWrapStyleWord(true);
+        anonymousAnnotationsArea.setToolTipText(QualiTestBundle.message("settings.hint.anonymous.annotations"));
 
         serverUrlField.setColumns(FIELD_COLUMNS);
         projectTokenField.setColumns(FIELD_COLUMNS);
@@ -53,6 +64,8 @@ public class QualiTestSettingsPanel {
 
         JLabel groupHint = new JLabel(QualiTestBundle.message("settings.hint.group.tag"));
         groupHint.setForeground(UIUtil.getContextHelpForeground());
+        JLabel anonymousHint = new JLabel(QualiTestBundle.message("settings.hint.anonymous.annotations"));
+        anonymousHint.setForeground(UIUtil.getContextHelpForeground());
 
         JPanel form = new JPanel(new GridBagLayout());
         GridBagConstraints gc = new GridBagConstraints();
@@ -190,6 +203,33 @@ public class QualiTestSettingsPanel {
         form.add(ignoreFirstGroupLevelCheckBox, gc);
         row++;
 
+        gc.anchor = GridBagConstraints.LINE_END;
+        gc.fill = GridBagConstraints.NONE;
+        gc.weightx = 0;
+        gc.gridx = 0;
+        gc.gridy = row;
+        gc.insets = labelGap;
+        form.add(settingLabel("settings.label.anonymous.annotations"), gc);
+
+        gc.anchor = GridBagConstraints.LINE_START;
+        gc.fill = GridBagConstraints.BOTH;
+        gc.weightx = 1;
+        gc.weighty = 0;
+        gc.gridx = 1;
+        gc.insets = rowGap;
+        form.add(new JBScrollPane(anonymousAnnotationsArea), gc);
+        row++;
+
+        gc.anchor = GridBagConstraints.LINE_START;
+        gc.fill = GridBagConstraints.HORIZONTAL;
+        gc.weightx = 1;
+        gc.weighty = 0;
+        gc.gridx = 1;
+        gc.gridy = row;
+        gc.insets = JBUI.insets(2, 0, 8, 0);
+        form.add(anonymousHint, gc);
+        row++;
+
         addBottomGlue(form, row);
 
         panel = form;
@@ -223,6 +263,7 @@ public class QualiTestSettingsPanel {
             excludeJsonIgnoreFieldsCheckBox.setSelected(true);
             ignoreFirstGroupLevelCheckBox.setSelected(false);
             groupTagField.setText(QualiTestConstants.DEFAULT_GROUP_TAG);
+            anonymousAnnotationsArea.setText(String.join("\n", QualiTestConstants.DEFAULT_ANONYMOUS_ANNOTATIONS));
             return;
         }
         serverUrlField.setText(orEmpty(settings.getServerUrl()));
@@ -231,6 +272,7 @@ public class QualiTestSettingsPanel {
         excludeJsonIgnoreFieldsCheckBox.setSelected(settings.isExcludeJsonIgnoreFields());
         ignoreFirstGroupLevelCheckBox.setSelected(settings.isIgnoreFirstGroupLevel());
         groupTagField.setText(settings.getGroupTag());
+        anonymousAnnotationsArea.setText(settings.getAnonymousAnnotationsText());
     }
 
     public void applyTo(QualiTestSettings settings) {
@@ -240,6 +282,7 @@ public class QualiTestSettingsPanel {
         settings.setExcludeJsonIgnoreFields(excludeJsonIgnoreFieldsCheckBox.isSelected());
         settings.setIgnoreFirstGroupLevel(ignoreFirstGroupLevelCheckBox.isSelected());
         settings.setGroupTag(groupTagField.getText().trim());
+        settings.setAnonymousAnnotationsText(anonymousAnnotationsArea.getText());
     }
 
     public boolean isModified(QualiTestSettings settings) {
@@ -267,7 +310,12 @@ public class QualiTestSettingsPanel {
             return true;
         }
 
-        return false;
+        // 免登录注解：规范化后再比，避免空白/换行差异误判为已修改
+        List<String> edited = AuthAnnotationMatcher.normalizeConfigured(List.of(anonymousAnnotationsArea.getText()));
+        if (edited.isEmpty()) {
+            edited = QualiTestConstants.DEFAULT_ANONYMOUS_ANNOTATIONS;
+        }
+        return !edited.equals(settings.getAnonymousAnnotations());
     }
 
     private String orEmpty(String value) {

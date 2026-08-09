@@ -26,6 +26,13 @@ public class ApiImportParams {
     @SerializedName("testProjectId")
     private Long testProjectId;
 
+    /**
+     * 为 true 时：若服务端项目鉴权配置为空，则写入双端 Bearer 默认模板。
+     * 仅项目级全量上传应开启。
+     */
+    @SerializedName("seedProjectAuthIfEmpty")
+    private Boolean seedProjectAuthIfEmpty;
+
     @SerializedName("apiList")
     private List<ApiImportItem> apiList;
 }

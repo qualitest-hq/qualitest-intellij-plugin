@@ -54,6 +54,12 @@ public class ScannedApi {
     @SerializedName("externalId")
     private String externalId;
 
+    /**
+     * 扫描时写入的鉴权标签：命中免登录注解为 none，否则为 inherit；随接口一并上传。
+     */
+    @SerializedName("auth")
+    private ApiAuthConfig auth;
+
     /** 所属 Controller 全限定名，仅插件内部用于统计与过滤，不上传服务端。 */
     private String controllerQualifiedName;
 

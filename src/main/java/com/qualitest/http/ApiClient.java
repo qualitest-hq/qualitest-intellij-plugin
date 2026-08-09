@@ -61,9 +61,12 @@ public class ApiClient {
     }
 
     /**
-     * 上传扫描到的 API 列表。项目 ID 由请求头 X-Project-Token 在服务端解析，请求体无需带 testProjectId。
+     * 上传扫描到的 API 列表。项目 ID 由请求头 X-Project-Token 在服务端解析。
+     *
+     * @param seedProjectAuthIfEmpty 项目级上传传 true：项目鉴权配置为空时由服务端写入默认模板；
+     *                               单 Controller 上传传 false
      */
-    public ImportResult uploadApis(List<ScannedApi> apis) throws ApiClientException {
+    public ImportResult uploadApis(List<ScannedApi> apis, boolean seedProjectAuthIfEmpty) throws ApiClientException {
         if (apis == null || apis.isEmpty()) {
             throw new ApiClientException(QualiTestBundle.message("scan.done.no.apis"));
         }
@@ -76,6 +79,7 @@ public class ApiClient {
 
         ApiImportParams params = ApiImportParams.builder()
                 .configVersion(ApiImportParams.CONFIG_VERSION)
+                .seedProjectAuthIfEmpty(seedProjectAuthIfEmpty ? Boolean.TRUE : null)
                 .apiList(items)
                 .build();
 
@@ -87,10 +91,11 @@ public class ApiClient {
             // 记录插件发送条数，便于与服务端处理/新增/更新数对比
             result.setSentCount(apis.size());
             LOG.info(String.format(
-                    "QualiTest API 上传: 发送=%d, 处理=%d, 新增=%d, 更新=%d, 成功=%d, 失败=%d",
+                    "QualiTest API 上传: 发送=%d, 处理=%d, 新增=%d, 更新=%d, 成功=%d, 失败=%d, seedAuth=%s",
                     result.getSentCount(), result.getTotalCount(),
                     result.getInsertCount(), result.getUpdateCount(),
-                    result.getSuccessCount(), result.getFailCount()));
+                    result.getSuccessCount(), result.getFailCount(),
+                    seedProjectAuthIfEmpty));
             return result;
         } catch (ApiClientException e) {
             throw e;
@@ -102,6 +107,13 @@ public class ApiClient {
         } catch (Exception e) {
             throw new ApiClientException(QualiTestBundle.message("error.upload.unknown"), e);
         }
+    }
+
+    /**
+     * 上传 API（不触发项目鉴权种子），等价于 {@code uploadApis(apis, false)}。
+     */
+    public ImportResult uploadApis(List<ScannedApi> apis) throws ApiClientException {
+        return uploadApis(apis, false);
     }
 
     private void validateUploadConfiguration() throws ApiClientException {
@@ -139,6 +151,8 @@ public class ApiClient {
         item.setSourceSystem(api.getSourceSystem());
         item.setExternalId(api.getExternalId());
         item.setLastSyncTime(new Date());
+        // 鉴权标签（免登录 / 需登录）一并上传
+        item.setAuth(api.getAuth());
 
         return item;
     }

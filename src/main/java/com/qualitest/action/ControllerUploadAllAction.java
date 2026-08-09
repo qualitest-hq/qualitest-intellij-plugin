@@ -2,22 +2,15 @@ package com.qualitest.action;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.progress.ProgressIndicator;
-import com.intellij.openapi.progress.ProgressManager;
-import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
-import com.qualitest.ImportResultFormatter;
 import com.qualitest.QualiTestBundle;
 import com.qualitest.QualiTestIcons;
 import com.qualitest.QualiTestNotifications;
-import com.qualitest.UploadErrors;
 import com.qualitest.config.QualiTestSettings;
 import com.qualitest.config.UploadConfigSupport;
-import com.qualitest.http.ApiClient;
-import com.qualitest.scan.ImportResult;
 import com.qualitest.scan.model.ScannedApi;
+import com.qualitest.ui.UploadTaskSupport;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,6 +19,8 @@ import java.util.List;
 
 /**
  * 在 Controller 上右键：直接将当前 Controller 的全部 API 上传，不打开选择对话框。
+ * <p>
+ * 不触发项目鉴权配置种子（仅项目级全量上传会种子）。
  */
 public class ControllerUploadAllAction extends AnAction {
 
@@ -71,7 +66,13 @@ public class ControllerUploadAllAction extends AnAction {
             return;
         }
 
-        runUploadTask(project, settings.getServerUrl().trim(), settings.getProjectToken().trim(), apis);
+        UploadTaskSupport.runUploadTask(
+                project,
+                settings.getServerUrl().trim(),
+                settings.getProjectToken().trim(),
+                apis,
+                false
+        );
     }
 
     @Override
@@ -85,43 +86,5 @@ public class ControllerUploadAllAction extends AnAction {
 
         boolean visible = ControllerUploadSupport.resolve(project, e).kind() == ControllerUploadSupport.Kind.OK;
         e.getPresentation().setEnabledAndVisible(visible);
-    }
-
-    private void runUploadTask(Project project, String serverUrl, String projectToken, List<ScannedApi> apis) {
-        ProgressManager.getInstance().run(new Task.Backgroundable(project,
-                QualiTestBundle.message("progress.upload.title"), true) {
-            private ImportResult result;
-
-            @Override
-            public void run(@NotNull ProgressIndicator indicator) {
-                indicator.setIndeterminate(false);
-                indicator.setText(QualiTestBundle.message("progress.upload.apis.count", apis.size()));
-
-                try {
-                    ApiClient client = new ApiClient(serverUrl, projectToken);
-                    result = client.uploadApis(apis);
-                    indicator.setFraction(1.0);
-
-                    ApplicationManager.getApplication().invokeLater(() -> showResult(project, result));
-                } catch (Exception ex) {
-                    ApplicationManager.getApplication().invokeLater(() ->
-                            QualiTestNotifications.showError(project,
-                                    UploadErrors.formatNotification(ex)));
-                }
-            }
-        });
-    }
-
-    private void showResult(Project project, ImportResult result) {
-        if (result == null) {
-            QualiTestNotifications.showError(project, QualiTestBundle.message("upload.failed.generic"));
-            return;
-        }
-        String message = ImportResultFormatter.formatSummaryMultiline(result);
-        if (result.isSuccess()) {
-            QualiTestNotifications.showInfo(project, QualiTestBundle.message("import.success.title"), message);
-        } else {
-            QualiTestNotifications.showInfo(project, QualiTestBundle.message("import.done.title"), message);
-        }
     }
 }

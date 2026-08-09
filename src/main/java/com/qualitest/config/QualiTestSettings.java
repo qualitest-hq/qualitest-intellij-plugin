@@ -5,8 +5,12 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
+import com.qualitest.scan.resolver.AuthAnnotationMatcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * QualiTest设置数据类
@@ -40,6 +44,10 @@ public class QualiTestSettings implements PersistentStateComponent<QualiTestSett
         }
         if (this.state.groupTag == null || this.state.groupTag.isBlank()) {
             this.state.groupTag = QualiTestConstants.DEFAULT_GROUP_TAG;
+        }
+        // 旧配置可能没有该字段，补上默认免登录注解名单
+        if (this.state.anonymousAnnotations == null) {
+            this.state.anonymousAnnotations = new ArrayList<>(QualiTestConstants.DEFAULT_ANONYMOUS_ANNOTATIONS);
         }
     }
 
@@ -116,6 +124,48 @@ public class QualiTestSettings implements PersistentStateComponent<QualiTestSett
     }
 
     /**
+     * 免登录注解列表（短名或全限定名）。
+     * 扫描时：方法或类命中名单中任一注解 → 接口标为免登录；名单为空时回退默认值。
+     */
+    @NotNull
+    public List<String> getAnonymousAnnotations() {
+        List<String> normalized = AuthAnnotationMatcher.normalizeConfigured(state.anonymousAnnotations);
+        if (normalized.isEmpty()) {
+            return QualiTestConstants.DEFAULT_ANONYMOUS_ANNOTATIONS;
+        }
+        return normalized;
+    }
+
+    /**
+     * 写入免登录注解名单；空列表会回退为默认值。
+     */
+    public void setAnonymousAnnotations(List<String> annotations) {
+        List<String> normalized = AuthAnnotationMatcher.normalizeConfigured(annotations);
+        state.anonymousAnnotations = new ArrayList<>(
+                normalized.isEmpty() ? QualiTestConstants.DEFAULT_ANONYMOUS_ANNOTATIONS : normalized);
+    }
+
+    /**
+     * 设置页多行文本形式的免登录注解（每行一个，也可用逗号分隔）。
+     */
+    @NotNull
+    public String getAnonymousAnnotationsText() {
+        return String.join("\n", getAnonymousAnnotations());
+    }
+
+    /**
+     * 从设置页多行文本写入免登录注解名单。
+     */
+    public void setAnonymousAnnotationsText(String text) {
+        if (text == null || text.isBlank()) {
+            setAnonymousAnnotations(QualiTestConstants.DEFAULT_ANONYMOUS_ANNOTATIONS);
+            return;
+        }
+        // 整段交给规范化逻辑按行/逗号拆分
+        setAnonymousAnnotations(List.of(text));
+    }
+
+    /**
      * 配置状态
      */
     public static class State {
@@ -130,5 +180,10 @@ public class QualiTestSettings implements PersistentStateComponent<QualiTestSett
          * 使用 Boolean 以便区分「用户从未配置」与「显式关闭」：null 与 true 均视为开启排除。
          */
         public Boolean excludeJsonIgnoreFields = true;
+        /**
+         * 免登录注解短名或全限定名列表。
+         * null 表示尚未配置，读取时按默认名单处理。
+         */
+        public List<String> anonymousAnnotations = new ArrayList<>(QualiTestConstants.DEFAULT_ANONYMOUS_ANNOTATIONS);
     }
 }

@@ -6,8 +6,7 @@ import lombok.*;
 import java.util.Date;
 
 /**
- * 单个 API 导入项。
- * 对应后端 ApiImportParams.ApiImportItem。
+ * 单个 API 导入项，序列化后作为上传包中的一条接口数据。
  *
  * @author qualitest
  */
@@ -49,4 +48,10 @@ public class ApiImportItem {
 
     @SerializedName("lastSyncTime")
     private Date lastSyncTime;
+
+    /**
+     * 接口鉴权标签（是否免登录等），有则一并上传给服务端落库。
+     */
+    @SerializedName("auth")
+    private ApiAuthConfig auth;
 }
