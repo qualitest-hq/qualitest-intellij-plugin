@@ -7,6 +7,7 @@ import com.intellij.psi.PsiModifierListOwner;
 import com.qualitest.scan.model.ApiAuthConfig;
 import com.qualitest.scan.model.ScannedApi;
 import com.qualitest.scan.resolver.AuthAnnotationMatcher;
+import com.qualitest.scan.support.BuiltinAnonymousAuthPaths;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
  * <p>
  * 规则：API 方法或其所属 Controller 类上，只要命中名单中任一注解，
  * 则标记为免登录（mode=none）；否则标记为需要登录（mode=inherit）。
+ * 另：path 命中内置免登启发式（/login 等）且 method 为 POST 时，亦标 none。
  */
 public class ApiAuthExtractor implements ApiExtractor {
 
@@ -38,9 +40,22 @@ public class ApiAuthExtractor implements ApiExtractor {
     public void extract(ScannedApi api, PsiClass controllerClass, PsiMethod method) {
         if (isAnonymous(method) || isAnonymous(controllerClass)) {
             api.setAuth(ApiAuthConfig.none());
-        } else {
-            api.setAuth(ApiAuthConfig.inherit());
+            return;
         }
+        if (api != null
+                && BuiltinAnonymousAuthPaths.matches(api.getApiPath())
+                && BuiltinAnonymousAuthPaths.methodAllowsHeuristic(resolveHttpMethod(api))) {
+            api.setAuth(ApiAuthConfig.none());
+            return;
+        }
+        api.setAuth(ApiAuthConfig.inherit());
+    }
+
+    private static String resolveHttpMethod(ScannedApi api) {
+        if (api.getRequestConfig() == null) {
+            return null;
+        }
+        return api.getRequestConfig().getMethod();
     }
 
     /**
