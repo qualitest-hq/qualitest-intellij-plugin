@@ -28,7 +28,7 @@
 - **上传入口**（见 `plugin.xml`）：
   - **Tools 菜单**：**项目级上传**（扫描整个工程，确认后批量上传；可勾选仅上传带 `@api.group` / `@Tag` 的 Controller）。
   - **编辑器右键**：当前 Controller 的「上传全部」或「选择上传」（选择上传支持分组过滤勾选）。
-- **HTTP 对接**：使用请求头 `X-Project-Token` 调用服务端接口 `/api/project/importApis`（项目上下文由服务端根据 Token 解析，无需在请求体里传 `testProjectId`）。请求体带 `uploadType`：`project`（项目级）/ `controllerAll` / `controllerSelect`；仅 `project` 会在项目鉴权配置为空时写入通用单套 Bearer 种子（含 `/login`、`/api/account/auth/login` 等内置免登 path）。扫描时命中免登注解或内置免登 path 的接口会标 `auth.mode=none`；同步后请在质衡核对登录口鉴权标签。
+- **HTTP 对接**：使用请求头 `X-Project-Token` 调用服务端接口 `/api/project/importApis`（项目上下文由服务端根据 Token 解析，无需在请求体里传 `testProjectId`）。请求体带 `uploadType`：`project`（项目级）/ `controllerAll` / `controllerSelect`；仅 `project` 会在项目鉴权配置为空时写入通用单套 Bearer 种子（不分端、无匿名 path）。
 - **上传前配置校验**：在确认上传（项目级确认框 / 选择上传对话框点「上传」）时，若服务器地址或项目令牌未配置，会提示并引导打开 **Settings → Tools → Qualitest Helper**。
 
 ---
