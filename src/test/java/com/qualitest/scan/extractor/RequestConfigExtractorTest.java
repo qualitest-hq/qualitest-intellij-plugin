@@ -25,10 +25,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * {@link RequestConfigExtractor} 请求体扫描测试。
- * <p>
+ * 请求体扫描测试。
  * 覆盖：MultipartFile / RequestPart 扫成 form-data 的 file；
- * 文本表单项为 string；多文件 description 含 multiple；纯 JSON body 仍为 json。
+ * 文本表单项为 string；多文件 description 含 multiple；纯 JSON body 仍为 json；
+ * JSON schema.required 含 NotNull / NotEmpty 字段；PathVariable.required=false 不受 NotEmpty 影响。
  */
 public class RequestConfigExtractorTest extends LightJavaCodeInsightFixtureTestCase {
 
@@ -54,9 +54,14 @@ public class RequestConfigExtractorTest extends LightJavaCodeInsightFixtureTestC
                 "org/springframework/web/bind/annotation/RequestParam.java",
                 "org/springframework/web/bind/annotation/RequestBody.java",
                 "org/springframework/web/bind/annotation/PostMapping.java",
+                "org/springframework/web/bind/annotation/PathVariable.java",
                 "org/springframework/web/bind/annotation/ModelAttribute.java",
+                "javax/validation/constraints/NotNull.java",
+                "javax/validation/constraints/NotBlank.java",
+                "javax/validation/constraints/NotEmpty.java",
                 "com/qualitest/test/request/UploadForm.java",
                 "com/qualitest/test/request/JsonBodyDto.java",
+                "com/qualitest/test/request/ValidatedJsonDto.java",
                 "com/qualitest/test/request/FileUploadController.java"
         );
         AnnotationResolver annotationResolver = new AnnotationResolver();
@@ -135,6 +140,31 @@ public class RequestConfigExtractorTest extends LightJavaCodeInsightFixtureTestC
         assertNotNull(config.getBody().getJson());
         assertNotNull(config.getBody().getJson().getSchema());
         assertEquals("object", config.getBody().getJson().getSchema().get("type"));
+    }
+
+    /** NotNull / NotEmpty 字段进入 JSON schema.required；无注解字段不进。 */
+    @SuppressWarnings("unchecked")
+    public void testValidatedJsonBody_schemaRequiredFromConstraints() {
+        RequestConfig config = configForMethod("validatedJsonBody");
+        assertEquals("json", config.getBody().getMode());
+        Map<String, Object> schema = config.getBody().getJson().getSchema();
+        assertNotNull(schema);
+        Object requiredRaw = schema.get("required");
+        assertTrue(requiredRaw instanceof List);
+        List<String> required = (List<String>) requiredRaw;
+        assertTrue(required.contains("name"));
+        assertTrue(required.contains("tags"));
+        assertFalse(required.contains("note"));
+    }
+
+    /** PathVariable.required=false 即使带 NotEmpty 仍为非必填。 */
+    public void testPathVariable_requiredFalseIgnoresNotEmpty() {
+        RequestConfig config = configForMethod("pathOptionalNotEmpty");
+        List<ApiParameter> pathParams = config.getPathParams();
+        assertNotNull(pathParams);
+        assertEquals(1, pathParams.size());
+        assertEquals("id", pathParams.get(0).getName());
+        assertFalse(pathParams.get(0).isRequired());
     }
 
     /** 对夹具 Controller 指定方法执行提取，返回请求配置。 */

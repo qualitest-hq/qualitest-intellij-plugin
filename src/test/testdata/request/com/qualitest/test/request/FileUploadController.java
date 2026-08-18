@@ -1,11 +1,14 @@
 package com.qualitest.test.request;
 
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.NotEmpty;
 
 import java.util.List;
 
@@ -49,6 +52,20 @@ public class FileUploadController {
     /** 纯 JSON 请求体，扫描结果应为 json body */
     @PostMapping("/json")
     public String jsonBody(@RequestBody JsonBodyDto body) {
+        return "ok";
+    }
+
+    /** 带 NotNull / NotEmpty 的 JSON 请求体，schema.required 应含 name、tags */
+    @PostMapping("/json-validated")
+    public String validatedJsonBody(@RequestBody ValidatedJsonDto body) {
+        return "ok";
+    }
+
+    /**
+     * 路径参数 required=false，即使带 NotEmpty 也不应变为必填。
+     */
+    @PostMapping("/path/{id}")
+    public String pathOptionalNotEmpty(@PathVariable(required = false) @NotEmpty String id) {
         return "ok";
     }
 }

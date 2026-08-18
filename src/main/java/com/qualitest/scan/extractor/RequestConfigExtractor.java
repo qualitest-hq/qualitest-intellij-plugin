@@ -102,7 +102,7 @@ public class RequestConfigExtractor implements ApiExtractor {
      * <p>
      * 文件类型参数不会进入 query；若方法已被识别为 multipart 上传，则其 {@code @RequestParam}
      * 与隐式简单参数改由 form-data 承载，此处全部跳过。
-     * 查询侧必填：优先读 {@code @RequestParam.required}，未写时再看 {@code @NotNull}/{@code @NotBlank}。
+     * 查询侧必填：优先读 RequestParam.required，未写时再看 NotNull、NotBlank、NotEmpty。
      *
      * @param method PSI 方法
      * @return 查询参数列表
@@ -584,8 +584,8 @@ public class RequestConfigExtractor implements ApiExtractor {
 
     /**
      * 判断文件参数是否必填。
-     * {@code @RequestPart}/{@code @RequestParam} 未写 required 时默认必填；
-     * 其它情况回退到 {@code @NotNull}/{@code @NotBlank}。
+     * RequestPart / RequestParam 未写 required 时默认必填；
+     * 其它情况再看 NotNull、NotBlank、NotEmpty。
      */
     private boolean isFileParameterRequired(PsiParameter parameter) {
         if (annotationResolver.hasAnnotation(parameter, "RequestPart")) {
@@ -795,8 +795,8 @@ public class RequestConfigExtractor implements ApiExtractor {
     }
 
     /**
-     * 判断 {@code @RequestParam} 是否必填：有 required 属性用其值；
-     * 未写 required 时根据 {@code @NotNull}/{@code @NotBlank} 判断。
+     * 判断 RequestParam 是否必填：有 required 属性用其值；
+     * 未写 required 时根据 NotNull、NotBlank、NotEmpty 判断。
      *
      * @param parameter PSI 参数
      * @return true 表示必填
@@ -812,26 +812,30 @@ public class RequestConfigExtractor implements ApiExtractor {
         return isRequiredField(parameter);
     }
 
-    /** 请求头参数是否必填：读 {@code @RequestHeader.required}，未写则看校验注解。 */
+    /** 请求头是否必填：读 RequestHeader.required，未写则看 NotNull、NotBlank、NotEmpty。 */
     private boolean isRequestHeaderRequired(PsiParameter parameter) {
         return readRequiredAttribute(parameter, "RequestHeader", isRequiredField(parameter));
     }
 
-    /** 路径参数是否必填：读 {@code @PathVariable.required}，未写则默认必填。 */
+    /** 路径参数是否必填：读 PathVariable.required，未写则默认必填。 */
     private boolean isPathVariableRequired(PsiParameter parameter) {
         return readRequiredAttribute(parameter, "PathVariable", true);
     }
 
+    /** 视为必填的校验注解简写名：NotNull、NotBlank、NotEmpty。 */
+    private static final String[] REQUIRED_CONSTRAINT_ANNOTATIONS = {"NotNull", "NotBlank", "NotEmpty"};
+
     /**
-     * 根据字段上的校验注解判断是否为必填字段。
-     * 支持 @NotNull 和 @NotBlank。
-     *
-     * @param element  PSI 字段或参数
-     * @return true 表示标有必填校验注解
+     * 字段或参数是否带必填校验注解。
+     * 认 NotNull、NotBlank、NotEmpty。
      */
     private boolean isRequiredField(PsiModifierListOwner element) {
-        return annotationResolver.hasAnnotation(element, "NotNull") ||
-               annotationResolver.hasAnnotation(element, "NotBlank");
+        for (String name : REQUIRED_CONSTRAINT_ANNOTATIONS) {
+            if (annotationResolver.hasAnnotation(element, name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
