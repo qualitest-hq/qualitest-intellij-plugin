@@ -5,7 +5,7 @@ package com.qualitest.scan.model;
  * <p>
  * 扫描结果缺少 requestConfig 或 responseConfig 时，插件用此处常量填充后再提交导入接口。
  */
-public final class ApiConfigV2Defaults {
+public final class ApiConfigDefaults {
 
     /** 导入包与配置块的协议版本号 */
     public static final int CONFIG_VERSION = 1;
@@ -24,6 +24,6 @@ public final class ApiConfigV2Defaults {
             "{\"configVersion\":1,\"responses\":[{\"id\":\"resp-default\",\"name\":\"成功\","
                     + "\"httpStatus\":200,\"contentType\":\"json\",\"schema\":null,\"example\":null}]}";
 
-    private ApiConfigV2Defaults() {
+    private ApiConfigDefaults() {
     }
 }

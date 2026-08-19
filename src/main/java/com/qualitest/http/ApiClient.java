@@ -11,7 +11,7 @@ import com.google.gson.JsonSerializer;
 import com.intellij.openapi.diagnostic.Logger;
 import com.qualitest.QualiTestBundle;
 import com.qualitest.QualiTestStrings;
-import com.qualitest.scan.model.ApiConfigV2Defaults;
+import com.qualitest.scan.model.ApiConfigDefaults;
 import com.qualitest.scan.model.ApiImportItem;
 import com.qualitest.scan.model.ApiImportParams;
 import com.qualitest.scan.model.ApiImportUploadType;
@@ -130,7 +130,7 @@ public class ApiClient {
     }
 
     /**
-     * 将 ScannedApi 转为导入项；配置对象为 null 时使用 {@link ApiConfigV2Defaults} 最小 JSON。
+     * 将 ScannedApi 转为导入项；配置对象为 null 时使用 {@link ApiConfigDefaults} 最小 JSON。
      */
     private ApiImportItem convertToItem(ScannedApi api) {
         ApiImportItem item = new ApiImportItem();
@@ -141,8 +141,8 @@ public class ApiClient {
         item.setApiPath(api.getApiPath());
         item.setProtocolType(api.getProtocolType());
 
-        item.setRequestConfig(toJsonOrDefault(api.getRequestConfig(), ApiConfigV2Defaults.MIN_REQUEST_CONFIG_JSON));
-        item.setResponseConfig(toJsonOrDefault(api.getResponseConfig(), ApiConfigV2Defaults.MIN_RESPONSE_CONFIG_JSON));
+        item.setRequestConfig(toJsonOrDefault(api.getRequestConfig(), ApiConfigDefaults.MIN_REQUEST_CONFIG_JSON));
+        item.setResponseConfig(toJsonOrDefault(api.getResponseConfig(), ApiConfigDefaults.MIN_RESPONSE_CONFIG_JSON));
 
         item.setSourceSystem(api.getSourceSystem());
         item.setExternalId(api.getExternalId());

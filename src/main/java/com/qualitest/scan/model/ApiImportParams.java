@@ -17,7 +17,7 @@ import java.util.List;
 public class ApiImportParams {
 
     /** 上传包协议版本，固定为 1 */
-    public static final int CONFIG_VERSION = ApiConfigV2Defaults.CONFIG_VERSION;
+    public static final int CONFIG_VERSION = ApiConfigDefaults.CONFIG_VERSION;
 
     @SerializedName("configVersion")
     @Builder.Default
