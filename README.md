@@ -249,5 +249,6 @@ Apache License 2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
 
 ## 联系方式
 
-- Website: https://www.qualitest.com  
-- Support: support@qualitest.com  
+- Website: https://qualitest-hq.github.io/qualitest/  
+- GitHub: https://github.com/qualitest-hq/qualitest  
+
