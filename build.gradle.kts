@@ -3,6 +3,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 plugins {
     id("java")
     alias(libs.plugins.intellijPlatform)
+    id("io.freefair.lombok") version "8.10.2"
 }
 
 group = "com.qualitest"
@@ -31,9 +32,7 @@ dependencies {
     // Gson for JSON serialization
     implementation("com.google.code.gson:gson:2.10.1")
 
-    // Lombok for reducing boilerplate (getters/setters/builders)
-    compileOnly("org.projectlombok:lombok:1.18.30")
-    annotationProcessor("org.projectlombok:lombok:1.18.30")
+    // Lombok：由 io.freefair.lombok 插件统一注入 compileOnly / annotationProcessor
 
     // PSI libraries are provided by IntelliJ Platform
     compileOnly("com.google.guava:guava:32.1.3-jre")

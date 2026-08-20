@@ -49,17 +49,17 @@ jobs:
       - name: Validate tag matches Gradle version
         run: |
           TAG_VERSION="${{ steps.tag.outputs.version }}"
-          GRADLE_VERSION="$(./gradlew -q printVersion)"
+          GRADLE_VERSION="$(./gradlew --no-configuration-cache -q printVersion)"
           if [ "$TAG_VERSION" != "$GRADLE_VERSION" ]; then
             echo "Tag version ($TAG_VERSION) != build.gradle.kts version ($GRADLE_VERSION)"
             exit 1
           fi
 
       - name: Full plugin verification matrix
-        run: ./gradlew test verifyPlugin -PverifyRecommended=true
+        run: ./gradlew --no-configuration-cache test verifyPlugin -PverifyRecommended=true
 
       - name: Build distributable ZIP
-        run: ./gradlew buildPlugin
+        run: ./gradlew --no-configuration-cache buildPlugin
 
       - name: Extract change notes
         id: notes
@@ -129,4 +129,4 @@ jobs:
       - name: Publish to JetBrains Marketplace
         env:
           PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
-        run: ./gradlew publishPlugin
+        run: ./gradlew --no-configuration-cache publishPlugin
