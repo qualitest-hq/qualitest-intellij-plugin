@@ -80,7 +80,7 @@
 
 **环境建议**
 
-- **JDK**：与本仓库所用的 IntelliJ Platform Gradle Plugin 及 Gradle 版本兼容即可（开发 2025.x 平台时通常使用 **JDK 17 或 21**，以本机已能成功执行 `./gradlew` 为准）。
+- **JDK**：目标平台 **2025.3** 时建议使用 **JDK 21**（与 IDE 自带 JBR 一致；CI 亦用 21）。Gradle 8.x 下 JDK 17 通常仍可编译，但非 2025.x 首选。
 - **IDE**：IntelliJ IDEA（推荐安装 **Plugin DevKit** 以便调试）。
 
 **常用 Gradle 任务**（Windows PowerShell 使用 `.\gradlew`，类 Unix 使用 `./gradlew`）：
