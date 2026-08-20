@@ -81,9 +81,27 @@ intellijPlatform {
         }
     }
 
-    // publishing {
-    //     token.set(System.getenv("PUBLISH_TOKEN") ?: "")
+    // 阶段 B：Marketplace 上架后在 release.yml marketplace job 中启用 PUBLISH_TOKEN
+    publishing {
+        token.set(providers.environmentVariable("PUBLISH_TOKEN"))
+        // channels.set(listOf("stable"))
+    }
+
+    // 阶段 B：Marketplace 要求签名时再取消注释并配置 Org Secrets
+    // signing {
+    //     certificateChain.set(providers.environmentVariable("CERTIFICATE_CHAIN"))
+    //     privateKey.set(providers.environmentVariable("PRIVATE_KEY"))
+    //     password.set(providers.environmentVariable("PRIVATE_KEY_PASSWORD"))
     // }
+}
+
+tasks.register("printVersion") {
+    group = "help"
+    description = "Print project version for CI tag validation"
+    val projectVersion = version.toString()
+    doLast {
+        println(projectVersion)
+    }
 }
 
 tasks {

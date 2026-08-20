@@ -15,6 +15,7 @@
 | **展示名称** | **Qualitest Helper**（设置页、Tools 菜单与编辑器右键菜单分组） |
 | **当前版本** | `1.0.0`（见 `build.gradle.kts`） |
 | **构建产物** | `./gradlew buildPlugin` 后在 `build/distributions/` 生成可分发的 ZIP |
+| **GitHub Releases** | [Releases](https://github.com/qualitest-hq/qualitest-intellij-plugin/releases)（推荐：下载 ZIP 离线安装） |
 | **目标 IDE** | `gradle.properties` 中 `platformVersion=2025.3.1`，`pluginSinceBuild=253`（对应 **2025.3** 一代构建号；请在 **2025.3+** 上安装使用） |
 
 依赖的 IntelliJ 捆绑插件：`com.intellij.java`、`com.intellij.modules.json`、`org.intellij.plugins.markdown`（见 `plugin.xml`）。
@@ -137,17 +138,46 @@ Remove-Item -Recurse -Force .\build\idea-sandbox
 
 ## 打包与安装（离线 ZIP）
 
+**推荐**：从 [GitHub Releases](https://github.com/qualitest-hq/qualitest-intellij-plugin/releases) 下载对应版本的 ZIP（无需本地构建）。
+
+本地自行打包：
+
 1. 执行：`.\gradlew buildPlugin`
 2. 在 **`build/distributions/`** 下找到生成的 **`.zip`**（名称通常包含插件名与版本）。
 3. 在 IntelliJ 中：**Settings → Plugins → ⚙（齿轮）→ Install Plugin from Disk…**，选择该 ZIP，重启 IDE。
 
 ---
 
+## 发版（维护者）
+
+版本与变更说明**唯一来源**：[`build.gradle.kts`](build.gradle.kts) 中的 `version` 与 `changeNotes`（不维护根目录 `CHANGELOG.md`）。
+
+1. 在 `main` 上更新 `version` + `changeNotes`（发版时在 `changeNotes` 顶部追加最新版本块，保留历史）。
+2. 本地可选：`.\gradlew verifyPlugin -PverifyRecommended=true buildPlugin`
+3. 合并 PR，确认 [**CI**](https://github.com/qualitest-hq/qualitest-intellij-plugin/actions/workflows/ci.yml) 通过。
+4. 打 tag 并推送（tag 须与 `version` 一致，带 `v` 前缀）：
+
+   ```bash
+   git tag v1.0.1
+   git push origin v1.0.1
+   ```
+
+5. [**Release workflow**](https://github.com/qualitest-hq/qualitest-intellij-plugin/actions/workflows/release.yml) 自动：全量 `verifyPlugin` → `buildPlugin` → 创建 GitHub Release 并附 ZIP。
+6. 预发布 tag（如 `v1.1.0-rc.1`）会标记为 GitHub Pre-release；**不会**发布到 Marketplace。
+
+**首版补发**：若 `main` 已稳定且尚无 Release，可对当前 commit 执行 `git tag v1.0.0 && git push origin v1.0.0`（需先合并含 workflow 的变更）。
+
+**阶段 B（Marketplace）**：上架后在 Org 配置 `PUBLISH_TOKEN`，并将 [`.github/workflows/release.yml`](.github/workflows/release.yml) 中 `marketplace` job 的 `if: false` 改为启用条件，再 `./gradlew publishPlugin` 由 CI 自动执行。
+
+---
+
 ## 发布到 JetBrains Marketplace
 
 1. 在 [JetBrains Marketplace](https://plugins.jetbrains.com/) 创建插件条目，取得 **永久令牌（Publish Token）**。
-2. 将令牌置于环境变量（常见名为 **`PUBLISH_TOKEN`**），并在 `build.gradle.kts` 中启用 `intellijPlatform { publishing { ... } }`（当前仓库内该段为注释示例，发布前需取消注释并配置 `token`）。
+2. 将令牌置于环境变量（常见名为 **`PUBLISH_TOKEN`**），并在 `build.gradle.kts` 中启用 `intellijPlatform { publishing { ... } }`（`publishing.token` 已预留；Release workflow 的 `marketplace` job 默认关闭，见上文「发版 · 阶段 B」）。
 3. 执行：`.\gradlew publishPlugin`（必要时配合 Marketplace 对插件 **ZIP 签名** 的要求使用 `signPlugin` 等任务，以官方文档为准）。
+
+未上架前，用户请从 [GitHub Releases](https://github.com/qualitest-hq/qualitest-intellij-plugin/releases) 下载 ZIP 离线安装。
 
 发布前务必：**提升版本号**（`build.gradle.kts` 的 `version`）、更新 **`changeNotes`**、运行 **`.\gradlew verifyPlugin -PverifyRecommended=true`**（全量矩阵）。
 
