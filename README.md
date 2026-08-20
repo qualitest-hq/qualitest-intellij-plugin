@@ -150,12 +150,43 @@ Remove-Item -Recurse -Force .\build\idea-sandbox
 
 ## 发版（维护者）
 
-版本与变更说明**唯一来源**：[`build.gradle.kts`](build.gradle.kts) 中的 `version` 与 `changeNotes`（不维护根目录 `CHANGELOG.md`）。
+版本与变更说明**唯一来源**：[`build.gradle.kts`](build.gradle.kts) 中的 `version` 与 `changeNotes`（**不**维护根目录 `CHANGELOG.md`）。
 
-1. 在 `main` 上更新 `version` + `changeNotes`（发版时在 `changeNotes` 顶部追加最新版本块，保留历史）。
-2. 本地可选：`.\gradlew verifyPlugin -PverifyRecommended=true buildPlugin`
-3. 合并 PR，确认 [**CI**](https://github.com/qualitest-hq/qualitest-intellij-plugin/actions/workflows/ci.yml) 通过。
-4. 打 tag 并推送（tag 须与 `version` 一致，带 `v` 前缀）：
+### 版本规则
+
+| 类型 | 何时升 | 示例 |
+|------|--------|------|
+| **PATCH** | bugfix、文案、小兼容 | `1.0.0` → `1.0.1` |
+| **MINOR** | 新功能、`pluginSinceBuild` 上调 | `1.0.1` → `1.1.0` |
+| **MAJOR** | 破坏性变更（协议删除等） | `1.x` → `2.0.0` |
+
+- Git tag 格式：`v` + 与 `version` **完全一致**（如 `v1.0.1`）；workflow 会校验，不一致则失败。
+- **同一版本不可再发**：已存在的 tag / Release 不能覆盖；修 BUG 必须升 PATCH。
+- **Private / 公开前**：只推 `main`、靠 CI 验证；**不要打 tag**（避免公开日出现多个试跑版本）。公开日再打首个 `v1.0.0`。
+- 预发布：`v1.1.0-rc.1` 等会标为 GitHub Pre-release，且**不**发 Marketplace。
+
+`changeNotes` 建议用 HTML 块、**顶部追加**最新版并保留历史（与 Marketplace 共用）：
+
+```kotlin
+changeNotes = """
+    <b>1.0.1</b>
+    <ul>
+      <li>Fix: …</li>
+    </ul>
+    <br/>
+    <b>1.0.0</b>
+    <ul>
+      <li>Initial release</li>
+    </ul>
+""".trimIndent()
+```
+
+### 发版步骤
+
+1. 在 `main` 上更新 `version` + `changeNotes`。
+2. 本地可选：`.\gradlew verifyPlugin -PverifyRecommended=true buildPlugin`（JDK **21**）。
+3. 合并 PR，确认 [**CI**](https://github.com/qualitest-hq/qualitest-intellij-plugin/actions/workflows/ci.yml) 通过（JDK 21；`test` + `verifyPluginStructure` + `verifyPlugin`）。
+4. 打 tag 并推送：
 
    ```bash
    git tag v1.0.1
@@ -163,11 +194,10 @@ Remove-Item -Recurse -Force .\build\idea-sandbox
    ```
 
 5. [**Release workflow**](https://github.com/qualitest-hq/qualitest-intellij-plugin/actions/workflows/release.yml) 自动：全量 `verifyPlugin` → `buildPlugin` → 创建 GitHub Release 并附 ZIP。
-6. 预发布 tag（如 `v1.1.0-rc.1`）会标记为 GitHub Pre-release；**不会**发布到 Marketplace。
 
-**首版补发**：若 `main` 已稳定且尚无 Release，可对当前 commit 执行 `git tag v1.0.0 && git push origin v1.0.0`（需先合并含 workflow 的变更）。
+**首版（公开日）**：确认 `main` 稳定、CI 绿、尚无 Release 后：`git tag v1.0.0 && git push origin v1.0.0`。
 
-**阶段 B（Marketplace）**：上架后在 Org 配置 `PUBLISH_TOKEN`，并将 [`.github/workflows/release.yml`](.github/workflows/release.yml) 中 `marketplace` job 的 `if: false` 改为启用条件，再 `./gradlew publishPlugin` 由 CI 自动执行。
+**阶段 B（Marketplace）**：上架后在 Org 配置 `PUBLISH_TOKEN`，并将 [`.github/workflows/release.yml`](.github/workflows/release.yml) 中 `marketplace` job 的 `if: false` 改为启用条件，由 CI 自动执行 `publishPlugin`。
 
 ---
 

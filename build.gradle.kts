@@ -49,11 +49,12 @@ intellijPlatform {
         }
 
         changeNotes = """
-            1.0.0 - Initial release
-            - Java API scanning support
-            - Extract API info from Controller classes
-            - Upload to QualiTest platform
-            - Support Spring MVC, Swagger and Validation annotations
+            <b>1.0.0</b>
+            <ul>
+              <li>Initial release：扫描 Java Controller API 并上传到 QualiTest</li>
+              <li>支持 Spring MVC、Swagger / OpenAPI、Validation 与 JavaDoc</li>
+              <li>Tools 项目级上传；编辑器右键上传全部 / 选择上传</li>
+            </ul>
         """.trimIndent()
     }
 
