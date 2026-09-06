@@ -40,7 +40,7 @@
 
 | 配置项 | 含义 |
 |--------|------|
-| **服务器地址** | QualiTest 后端 Base URL，默认 `http://localhost:8080` |
+| **服务器地址** | QualiTest 后端 Base URL，默认 `http://localhost:8800` |
 | **项目令牌（Project Token）** | 用于上传鉴权，对应 HTTP 头 `X-Project-Token`（从 QualiTest 项目设置中获取）；**上传前必填** |
 | **分组注释** | JavaDoc 中用于 API 分组的标签模式，默认与常量 `QualiTestConstants.DEFAULT_GROUP_TAG` 一致（如 `api.group {group}`） |
 | **扫描已废弃的 API** | 是否包含标记为 deprecated 的接口 |

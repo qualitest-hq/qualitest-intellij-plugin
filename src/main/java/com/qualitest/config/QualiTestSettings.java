@@ -37,7 +37,7 @@ public class QualiTestSettings implements PersistentStateComponent<QualiTestSett
     public void loadState(@NotNull State state) {
         this.state = state;
         if (this.state.serverUrl == null) {
-            this.state.serverUrl = "http://localhost:8080";
+            this.state.serverUrl = "http://localhost:8800";
         }
         if (this.state.projectToken == null) {
             this.state.projectToken = "";
@@ -169,7 +169,7 @@ public class QualiTestSettings implements PersistentStateComponent<QualiTestSett
      * 配置状态
      */
     public static class State {
-        public String serverUrl = "http://localhost:8080";
+        public String serverUrl = "http://localhost:8800";
         public String projectToken = "";
         public boolean scanDeprecated = true;
         public String groupTag = QualiTestConstants.DEFAULT_GROUP_TAG;
