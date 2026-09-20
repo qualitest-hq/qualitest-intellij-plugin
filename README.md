@@ -1,6 +1,6 @@
 # Qualitest Helper（IntelliJ 插件）
 
-面向 Java / Spring 项目的 **QualiTest 平台** 配套插件：在 IDE 内扫描 Controller 接口元数据，并上传到 QualiTest 服务端。
+面向 Java / Spring 项目的 **Qualitest** 平台配套插件：在 IDE 内扫描 Controller 接口元数据，并上传到 Qualitest 服务端。
 
 ## 相关仓库
 
@@ -247,8 +247,13 @@ changeNotes = """
 
 Apache License 2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
 
+## 社区
+
+- [贡献指南](./CONTRIBUTING.md) · [行为准则](./CODE_OF_CONDUCT.md) · [安全策略](./SECURITY.md)
+
 ## 联系方式
 
 - Website: https://qualitest-hq.github.io/qualitest/  
 - GitHub: https://github.com/qualitest-hq/qualitest  
+- 安全披露：见 [SECURITY.md](./SECURITY.md)（邮件 `38680050@qq.com`）
 
