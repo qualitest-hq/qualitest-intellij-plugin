@@ -3,7 +3,7 @@ import org.gradle.api.tasks.compile.JavaCompile
 plugins {
     id("java")
     alias(libs.plugins.intellijPlatform)
-    id("io.freefair.lombok") version "8.10.2"
+    id("io.freefair.lombok") version "9.5.0"
 }
 
 group = "com.qualitest"
