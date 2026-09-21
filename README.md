@@ -4,10 +4,13 @@
 
 ## 相关仓库
 
-| 仓库 | 说明 |
-|------|------|
-| [qualitest](https://github.com/qualitest-hq/qualitest) | 质衡主平台（服务端；含前端） |
-| [qualitest-demo](https://github.com/qualitest-hq/qualitest-demo) | 推荐联调靶场 / 示例工程 |
+| 仓库 | 说明 | GitHub | Gitee（只读镜像） |
+|------|------|--------|-------------------|
+| qualitest | 质衡主平台（服务端；含前端） | [GitHub](https://github.com/qualitest-hq/qualitest) | [Gitee](https://gitee.com/qualitest-hq/qualitest) |
+| qualitest-demo | 推荐联调靶场 / 示例工程 | [GitHub](https://github.com/qualitest-hq/qualitest-demo) | [Gitee](https://gitee.com/qualitest-hq/qualitest-demo) |
+| qualitest-intellij-plugin（本仓） | IDEA 插件 | [GitHub](https://github.com/qualitest-hq/qualitest-intellij-plugin) | [Gitee](https://gitee.com/qualitest-hq/qualitest-intellij-plugin) |
+
+> GitHub 为主仓（Issue / PR / Release）；Gitee 为国内只读镜像，请勿向镜像提交代码。
 
 | 项目事实 | 说明 |
 |---------|------|
@@ -254,6 +257,7 @@ Apache License 2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
 ## 联系方式
 
 - Website: https://qualitest-hq.github.io/qualitest/  
-- GitHub: https://github.com/qualitest-hq/qualitest  
+- GitHub（主仓）: https://github.com/qualitest-hq/qualitest-intellij-plugin  
+- Gitee（只读镜像）: https://gitee.com/qualitest-hq/qualitest-intellij-plugin  
 - 安全披露：见 [SECURITY.md](./SECURITY.md)（邮件 `38680050@qq.com`）
 
