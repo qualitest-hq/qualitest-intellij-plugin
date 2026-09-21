@@ -6,15 +6,15 @@ bin/
 # IntelliJ Platform
 .intellijPlatform/
 
-# IDE - IntelliJ IDEA
+# IDE / 编辑器（勿提交）
+.vscode/
+.cursor/
+.cursorignore
 .idea/
 *.iws
 *.iml
 *.ipr
 out/
-
-# IDE - JetBrains
-.idea/
 *.sln.iml
 
 # Kotlin
