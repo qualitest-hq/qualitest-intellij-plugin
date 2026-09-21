@@ -30,7 +30,7 @@ dependencies {
     }
 
     // Gson for JSON serialization
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.google.code.gson:gson:2.14.0")
 
     // Lombok：由 io.freefair.lombok 插件统一注入 compileOnly / annotationProcessor
 
