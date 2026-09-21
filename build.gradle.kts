@@ -35,7 +35,7 @@ dependencies {
     // Lombok：由 io.freefair.lombok 插件统一注入 compileOnly / annotationProcessor
 
     // PSI libraries are provided by IntelliJ Platform
-    compileOnly("com.google.guava:guava:32.1.3-jre")
+    compileOnly("com.google.guava:guava:33.7.1-jre")
 
     testImplementation("junit:junit:4.13.2")
 }
