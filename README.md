@@ -18,7 +18,8 @@
 | **展示名称** | **Qualitest Helper**（设置页、Tools 菜单与编辑器右键菜单分组） |
 | **当前版本** | `1.0.0`（见 `build.gradle.kts`） |
 | **构建产物** | `./gradlew buildPlugin` 后在 `build/distributions/` 生成可分发的 ZIP |
-| **GitHub Releases** | [Releases](https://github.com/qualitest-hq/qualitest-intellij-plugin/releases)（推荐：下载 ZIP 离线安装） |
+| **GitHub Releases** | [Releases](https://github.com/qualitest-hq/qualitest-intellij-plugin/releases)（当前推荐：下载 ZIP 离线安装） |
+| **JetBrains Marketplace** | 已提交审核；通过前请用上方 Releases 安装，通过后可在 IDE 插件市场搜索 **Qualitest Helper** |
 | **目标 IDE** | `gradle.properties` 中 `platformVersion=2025.3.1`，`pluginSinceBuild=253`（对应 **2025.3** 一代构建号；请在 **2025.3+** 上安装使用） |
 
 依赖的 IntelliJ 捆绑插件：`com.intellij.java`、`com.intellij.modules.json`、`org.intellij.plugins.markdown`（见 `plugin.xml`）。
@@ -181,7 +182,7 @@ Remove-Item -Recurse -Force .\build\idea-sandbox
 
 - Git tag 格式：`v` + 与 `version` **完全一致**（如 `v1.0.1`）；workflow 会校验，不一致则失败。
 - **同一版本不可再发**：已存在的 tag / Release 不能覆盖；修 BUG 必须升 PATCH。
-- **Private / 公开前**：只推 `main`、靠 CI 验证；**不要打 tag**（避免公开日出现多个试跑版本）。公开日再打首个 `v1.0.0`。
+- 首发 tag `v1.0.0` 已发布；后续正式版继续打 `v*` tag 触发 Release。
 - 预发布：`v1.1.0-rc.1` 等会标为 GitHub Pre-release，且**不**发 Marketplace。
 
 `changeNotes` 建议用 HTML 块、**顶部追加**最新版并保留历史（与 Marketplace 共用）：
@@ -214,19 +215,19 @@ changeNotes = """
 
 5. [**Release workflow**](https://github.com/qualitest-hq/qualitest-intellij-plugin/actions/workflows/release.yml) 自动：全量 `verifyPlugin` → `buildPlugin` → 创建 GitHub Release 并附 ZIP。
 
-**首版（公开日）**：确认 `main` 稳定、CI 绿、尚无 Release 后：`git tag v1.0.0 && git push origin v1.0.0`。
-
-**阶段 B（Marketplace）**：上架后在 Org 配置 `PUBLISH_TOKEN`，并将 [`.github/workflows/release.yml`](.github/workflows/release.yml) 中 `marketplace` job 的 `if: false` 改为启用条件，由 CI 自动执行 `publishPlugin`。
+**阶段 B（Marketplace）**：首版已提交 Marketplace 审核。审核通过并上架后：在 Org 配置 `PUBLISH_TOKEN`，并将 [`.github/workflows/release.yml`](.github/workflows/release.yml) 中 `marketplace` job 的 `if: false` 改为启用条件，由 CI 自动执行 `publishPlugin`；同时把各仓 README 链到市场页。
 
 ---
 
 ## 发布到 JetBrains Marketplace
 
-1. 在 [JetBrains Marketplace](https://plugins.jetbrains.com/) 创建插件条目，取得 **永久令牌（Publish Token）**。
+**状态**：首版（`1.0.0`）已提交审核；通过前用户请从 [GitHub Releases](https://github.com/qualitest-hq/qualitest-intellij-plugin/releases) 下载 ZIP 离线安装。
+
+后续版本发布（审核通过后）：
+
+1. 在 [JetBrains Marketplace](https://plugins.jetbrains.com/) 插件条目取得 **永久令牌（Publish Token）**。
 2. 将令牌置于环境变量（常见名为 **`PUBLISH_TOKEN`**），并在 `build.gradle.kts` 中启用 `intellijPlatform { publishing { ... } }`（`publishing.token` 已预留；Release workflow 的 `marketplace` job 默认关闭，见上文「发版 · 阶段 B」）。
 3. 执行：`.\gradlew publishPlugin`（必要时配合 Marketplace 对插件 **ZIP 签名** 的要求使用 `signPlugin` 等任务，以官方文档为准）。
-
-未上架前，用户请从 [GitHub Releases](https://github.com/qualitest-hq/qualitest-intellij-plugin/releases) 下载 ZIP 离线安装。
 
 发布前务必：**提升版本号**（`build.gradle.kts` 的 `version`）、更新 **`changeNotes`**、运行 **`.\gradlew verifyPlugin -PverifyRecommended=true`**（全量矩阵）。
 
