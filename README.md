@@ -18,8 +18,8 @@
 | **展示名称** | **Qualitest Helper**（设置页、Tools 菜单与编辑器右键菜单分组） |
 | **当前版本** | `1.0.0`（见 `build.gradle.kts`） |
 | **构建产物** | `./gradlew buildPlugin` 后在 `build/distributions/` 生成可分发的 ZIP |
-| **GitHub Releases** | [Releases](https://github.com/qualitest-hq/qualitest-intellij-plugin/releases)（当前推荐：下载 ZIP 离线安装） |
-| **JetBrains Marketplace** | 已提交审核；通过前请用上方 Releases 安装，通过后可在 IDE 插件市场搜索 **Qualitest Helper** |
+| **GitHub Releases** | [Releases](https://github.com/qualitest-hq/qualitest-intellij-plugin/releases)（离线 ZIP） |
+| **JetBrains Marketplace** | 已上架 · [市场页](https://plugins.jetbrains.com/plugin/34434-qualitest-helper)；IDE 内搜 **Qualitest Helper** |
 | **目标 IDE** | `gradle.properties` 中 `platformVersion=2025.3.1`，`pluginSinceBuild=253`（对应 **2025.3** 一代构建号；请在 **2025.3+** 上安装使用） |
 
 依赖的 IntelliJ 捆绑插件：`com.intellij.java`、`com.intellij.modules.json`、`org.intellij.plugins.markdown`（见 `plugin.xml`）。
@@ -158,7 +158,7 @@ Remove-Item -Recurse -Force .\build\idea-sandbox
 
 ## 打包与安装（离线 ZIP）
 
-**推荐**：从 [GitHub Releases](https://github.com/qualitest-hq/qualitest-intellij-plugin/releases) 下载对应版本的 ZIP（无需本地构建）。
+**推荐**：IDE 插件市场搜 **Qualitest Helper**，或打开 [Marketplace](https://plugins.jetbrains.com/plugin/34434-qualitest-helper)。亦可从 [GitHub Releases](https://github.com/qualitest-hq/qualitest-intellij-plugin/releases) 下 ZIP 离线安装。
 
 本地自行打包：
 
@@ -215,15 +215,15 @@ changeNotes = """
 
 5. [**Release workflow**](https://github.com/qualitest-hq/qualitest-intellij-plugin/actions/workflows/release.yml) 自动：全量 `verifyPlugin` → `buildPlugin` → 创建 GitHub Release 并附 ZIP。
 
-**阶段 B（Marketplace）**：首版已提交 Marketplace 审核。审核通过并上架后：在 Org 配置 `PUBLISH_TOKEN`，并将 [`.github/workflows/release.yml`](.github/workflows/release.yml) 中 `marketplace` job 的 `if: false` 改为启用条件，由 CI 自动执行 `publishPlugin`；同时把各仓 README 链到市场页。
+**阶段 B（Marketplace）**：`1.0.0` 已上架。后续版本：在 Org 配置 `PUBLISH_TOKEN`，并将 [`.github/workflows/release.yml`](.github/workflows/release.yml) 中 `marketplace` job 的 `if: false` 改为启用条件，由 CI 自动 `publishPlugin`。
 
 ---
 
 ## 发布到 JetBrains Marketplace
 
-**状态**：首版（`1.0.0`）已提交审核；通过前用户请从 [GitHub Releases](https://github.com/qualitest-hq/qualitest-intellij-plugin/releases) 下载 ZIP 离线安装。
+**状态**：`1.0.0` 已上架 → [Marketplace](https://plugins.jetbrains.com/plugin/34434-qualitest-helper)。
 
-后续版本发布（审核通过后）：
+后续版本发布：
 
 1. 在 [JetBrains Marketplace](https://plugins.jetbrains.com/) 插件条目取得 **永久令牌（Publish Token）**。
 2. 将令牌置于环境变量（常见名为 **`PUBLISH_TOKEN`**），并在 `build.gradle.kts` 中启用 `intellijPlatform { publishing { ... } }`（`publishing.token` 已预留；Release workflow 的 `marketplace` job 默认关闭，见上文「发版 · 阶段 B」）。
