@@ -51,17 +51,27 @@
 
 配置持久化在应用级存储 `qualitest-settings.xml`（由 `QualiTestSettings` 管理）。
 
+![Settings → Tools → Qualitest Helper](docs/images/settings.png)
+
 ---
 
 ## 使用方式
+
+联调靶场推荐用 [qualitest-demo](https://github.com/qualitest-hq/qualitest-demo)（本截图即在该工程中操作）。
 
 ### 1. Tools 菜单（项目级上传）
 
 1. 用 IntelliJ 打开 Java 工程（建议已配置好依赖以便 PSI 能解析类型）。
 2. 菜单 **Tools → Qualitest Helper → 项目级上传**（快捷键 **Ctrl+Shift+Q**，Windows/Linux 默认键位）。
+
+![Tools → 项目级上传](docs/images/tools-project-upload.png)
+
 3. 插件在后台扫描整个项目中的 Controller API，随后弹出**确认上传**对话框：
    - 展示两行统计：**全量**与**分组注释**各自的 API / Controller 数量
    - 可勾选「仅上传带分组注释（@api.group / @Tag）的 Controller」后上传
+
+![同步接口到质衡 · 确认上传范围](docs/images/project-upload-confirm.png)
+
 4. 点击确认框中的「上传」时，若尚未配置服务器地址或项目令牌，会提示并引导前往设置页；网络异常时会给出可读的错误说明（而非 `null`）。
 
 ### 2. 编辑器右键（当前 Controller）
@@ -72,6 +82,12 @@
 |--------|------|
 | **上传全部 qualitest** | 上传该文件中解析到的全部 API |
 | **选择上传 qualitest** | 打开 `ApiSelectionDialog`，展示全量/分组注释统计，可勾选分组过滤后选择 API 上传 |
+
+![Controller 右键：上传全部 / 选择上传](docs/images/controller-context-menu.png)
+
+「选择上传」可勾选单条 API 并预览路径、参数与响应结构后再上传：
+
+![选择要上传的 API](docs/images/select-apis.png)
 
 若当前文件不是 Controller 或无法解析，插件会给出相应错误提示（见资源包中的 `controller.error.*` 文案）。
 
